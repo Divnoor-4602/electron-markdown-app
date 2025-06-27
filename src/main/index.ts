@@ -1,6 +1,6 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { electronApp, is, optimizer } from '@electron-toolkit/utils'
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 
 function createWindow(): void {
@@ -13,7 +13,10 @@ function createWindow(): void {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      // Permits to sandbox the render process to make it more secure
+      sandbox: true,
+      // The context isolation seperates the js rendering process from the main process
+      contextIsolation: true
     }
   })
 
@@ -22,6 +25,8 @@ function createWindow(): void {
   })
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
+    // denies the possibility of creating a new window
+    // because we do not need any seperate window except the main one
     shell.openExternal(details.url)
     return { action: 'deny' }
   })
@@ -52,6 +57,7 @@ app.whenReady().then(() => {
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
 
+  // If there is no open window, run the function to create the window
   createWindow()
 
   app.on('activate', function () {

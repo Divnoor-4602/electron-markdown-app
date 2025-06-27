@@ -1,9 +1,17 @@
-function App(): React.JSX.Element {
+import { Content, RootLayout, Sidebar } from '@/components'
+import { DraggableTopBar } from '@/components'
+import { ActionButtonsRow } from '@/components'
+
+const App = (): React.JSX.Element => {
   return (
     <>
-      <div className="flex h-full items-center justify-center">
-        <span className="text-4xl text-blue-600">Hello from electron</span>
-      </div>
+      <DraggableTopBar />
+      <RootLayout>
+        <Sidebar className="p-2 ">
+          <ActionButtonsRow className="flex justify-between mt-1" />
+        </Sidebar>
+        <Content className="border-l bg-zinc-900/50 border-l-white/20">Content</Content>
+      </RootLayout>
     </>
   )
 }

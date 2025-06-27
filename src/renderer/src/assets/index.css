@@ -18,4 +18,13 @@
 
     @apply overflow-hidden;
   }
+
+  /* Allowing the window to be dragged properly */
+  header {
+    -webkit-app-region: drag;
+  }
+
+  button {
+    -webkit-app-region: no-drag;
+  }
 }

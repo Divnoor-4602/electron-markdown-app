@@ -7,7 +7,8 @@ if (!process.contextIsolated) {
 
 try {
   contextBridge.exposeInMainWorld('context', {
-    // TODO
+    // the navigator is an api that returns full information about the user os
+    locale: navigator.language
   })
 } catch (error) {
   console.error(error)

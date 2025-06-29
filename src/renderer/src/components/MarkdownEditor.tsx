@@ -392,6 +392,8 @@ Here's a sentence with a footnote[^1].
           }
           .w-md-editor .w-md-editor-preview {
             background-color: transparent !important;
+            overflow-y: auto !important;
+            max-height: 100% !important;
           }
           .w-md-editor .w-md-editor-text-input {
             background-color: transparent !important;
@@ -408,6 +410,11 @@ Here's a sentence with a footnote[^1].
           .wmde-markdown-var {
             background: transparent !important;
           }
+          .w-md-editor-text-textarea,
+          .w-md-editor-text-input,
+          .w-md-editor-text {
+            overflow-y: auto !important;
+          }
           ${
             !hasSelectedNote
               ? `
@@ -415,8 +422,13 @@ Here's a sentence with a footnote[^1].
             pointer-events: none !important;
           }
           .w-md-editor-preview {
-            pointer-events: none !important;
+            pointer-events: auto !important;
             opacity: 0.8;
+          }
+          .w-md-editor-text-textarea,
+          .w-md-editor-text-input,
+          .w-md-editor-text {
+            pointer-events: none !important;
           }
           `
               : ''
@@ -435,8 +447,6 @@ Here's a sentence with a footnote[^1].
         height="100%"
         style={
           {
-            height: '100%',
-            maxHeight: '100%',
             backgroundColor: 'transparent',
             '--color-canvas-default': 'transparent',
             '--color-canvas-subtle': 'transparent',
@@ -461,10 +471,7 @@ Here's a sentence with a footnote[^1].
             border: 'none',
             outline: 'none',
             padding: '16px',
-            width: '100%',
-            height: '100%',
-            maxHeight: '100%',
-            overflow: 'auto'
+            minHeight: '200px'
           }
         }}
       />

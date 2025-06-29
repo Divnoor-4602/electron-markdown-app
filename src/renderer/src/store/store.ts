@@ -1,22 +1,29 @@
 import { create } from 'zustand'
-import { notesMock } from './mocks'
 import { NoteInfo } from '@shared/models'
+
+const loadNotes = async (): Promise<NoteInfo[]> => {
+  const notes = await window.context.getNotes()
+  return notes.sort((a, b) => b.lastEditTime - a.lastEditTime)
+}
 
 type NotesStore = {
   notes: NoteInfo[]
   selectedNodeIndex: number | null
   selectedNote: NoteInfo | null
+  isLoading: boolean
   setNotes: (notes: NoteInfo[]) => void
   setSelectedNoteIndex: (index: number) => void
   addNewNote: (noteData: { title: string; content: string }) => void
   removeNote: (index: number) => void
+  loadNotesFromFileSystem: () => Promise<void>
 }
 
 export const useNoteStore = create<NotesStore>((set, get) => ({
-  // set default notes for the app to use
-  notes: notesMock,
+  // Initialize with empty array, will be loaded from file system
+  notes: [],
   selectedNodeIndex: null,
   selectedNote: null,
+  isLoading: false,
   // set notes action
   setNotes: (notes: NoteInfo[]) => set({ notes }),
   // set selected note index
@@ -24,6 +31,17 @@ export const useNoteStore = create<NotesStore>((set, get) => ({
     const { notes } = get()
     const selectedNote = notes[index]
     set({ selectedNodeIndex: index, selectedNote })
+  },
+  // load notes from file system
+  loadNotesFromFileSystem: async () => {
+    set({ isLoading: true })
+    try {
+      const notes = await loadNotes()
+      set({ notes, isLoading: false })
+    } catch (error) {
+      console.error('Failed to load notes:', error)
+      set({ isLoading: false })
+    }
   },
   // create and delete actions
   addNewNote: ({ title, content }) => {

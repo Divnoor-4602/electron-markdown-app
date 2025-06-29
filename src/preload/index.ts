@@ -1,4 +1,5 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
+import { GetNotes } from '../shared/types'
 
 // check if context isolation is enabled
 if (!process.contextIsolated) {
@@ -8,7 +9,9 @@ if (!process.contextIsolated) {
 try {
   contextBridge.exposeInMainWorld('context', {
     // the navigator is an api that returns full information about the user os
-    locale: navigator.language
+    locale: navigator.language,
+    // get notes invoker
+    getNotes: (...args: Parameters<GetNotes>) => ipcRenderer.invoke('getNotes', ...args)
   })
 } catch (error) {
   console.error(error)

@@ -2,8 +2,8 @@ import { electronApp, is, optimizer } from '@electron-toolkit/utils'
 import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
-import { getNotes } from './lib'
-import { GetNotes } from '../shared/types'
+import { createNote, getNotes, writeNote, deleteNote } from './lib'
+import { CreateNote, GetNotes, WriteNote, DeleteNote } from '../shared/types'
 
 function createWindow(): void {
   // Create the browser window.
@@ -14,7 +14,7 @@ function createWindow(): void {
     autoHideMenuBar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     center: true,
-    title: 'NoteMark',
+    title: 'DivNotes',
     frame: false,
     vibrancy: 'under-window',
     visualEffectState: 'active',
@@ -67,6 +67,9 @@ app.whenReady().then(() => {
   ipcMain.on('ping', () => console.log('pong'))
 
   ipcMain.handle('getNotes', (_, ...args: Parameters<GetNotes>) => getNotes(...args))
+  ipcMain.handle('writeNote', (_, ...args: Parameters<WriteNote>) => writeNote(...args))
+  ipcMain.handle('createNote', (_, ...args: Parameters<CreateNote>) => createNote(...args))
+  ipcMain.handle('deleteNote', (_, ...args: Parameters<DeleteNote>) => deleteNote(...args))
 
   // If there is no open window, run the function to create the window
   createWindow()

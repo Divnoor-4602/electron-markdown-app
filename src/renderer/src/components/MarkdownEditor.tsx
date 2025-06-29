@@ -2,16 +2,32 @@ import React, { useState, useEffect, useRef } from 'react'
 import MDEditor from '@uiw/react-md-editor'
 import '@uiw/react-md-editor/markdown-editor.css'
 import '@uiw/react-markdown-preview/markdown.css'
+import { useMarkdownEditor } from '@renderer/hooks/useMarkdownEditor'
 
 export const MarkdownEditor = (): React.JSX.Element => {
-  const [value, setValue] = useState<string>(
+  const { selectedNote } = useMarkdownEditor()
+
+  // Default content when no note is selected
+  const defaultContent =
     "# What's on your mind today?\n\nClick anywhere to start writing your thoughts...\n\n## Keyboard Shortcuts\n\nSwitch between edit and preview modes:\n\n```javascript\nCmd + E  →  Edit Mode\nCmd + P  →  Preview Mode\n```\n\n*Start typing to delete all this and begin your note. The editor will automatically switch to preview mode after 10 seconds of inactivity.*"
-  )
+
+  const [value, setValue] = useState<string>(selectedNote?.content || defaultContent)
   const [isEditing, setIsEditing] = useState<boolean>(false) // Start in preview mode
   const [hasFocus, setHasFocus] = useState<boolean>(false)
   const [isFirstEdit, setIsFirstEdit] = useState<boolean>(true) // Track if this is the first time editing
   const inactivityTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const editorRef = useRef<HTMLDivElement>(null)
+
+  // Update value when selectedNote changes
+  useEffect(() => {
+    if (selectedNote?.content) {
+      setValue(selectedNote.content)
+      setIsFirstEdit(false) // Don't clear content if we have a real note
+    } else {
+      setValue(defaultContent)
+      setIsFirstEdit(true) // Reset first edit flag for default content
+    }
+  }, [selectedNote])
 
   const clearInactivityTimeout = (): void => {
     if (inactivityTimeoutRef.current) {
@@ -163,6 +179,7 @@ export const MarkdownEditor = (): React.JSX.Element => {
         `}
       </style>
       <MDEditor
+        key={selectedNote?.title}
         ref={editorRef}
         value={value}
         onChange={handleChange}

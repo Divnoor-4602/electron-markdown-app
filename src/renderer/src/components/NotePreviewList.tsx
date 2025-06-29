@@ -1,5 +1,4 @@
 import React, { ComponentProps } from 'react'
-import { notesMock } from '@/store/mocks'
 import { NotePreview } from '@/components'
 import { twMerge } from 'tailwind-merge'
 import { useNotesList } from '@renderer/hooks/useNotesList'
@@ -22,7 +21,7 @@ export const NotePreviewList = ({
 
   return (
     <ul {...props} className={className}>
-      {notesMock.map((note, index) => (
+      {notes.map((note, index) => (
         <NotePreview
           {...note}
           key={note.title + note.lastEditTime}
